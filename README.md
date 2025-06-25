@@ -1,16 +1,43 @@
 # Make your own MC
 
-This repository proves scripts to run private MC generation. It consists of the exact same cmsDriver.py commands used in central production (...painstaking copied by hand from MCM).
+This repository proves scripts to run private MC generation. It consists of the exact same cmsDriver.py commands used in central production (...painstaking copied by hand from MCM by David Yu, the main author of this code base).
 
 Setup instructions (note: `git cms-addpkg` has to work):
 ```
 git clone git@github.com:DryRun/MYOMC.git
 cd MYOMC
-source firsttime.sh
-# For future sessions, run env.sh
+```
+# Make your own R-Hadron MC for the HSCP analysis
+
+We want to use this code base to make private R-hadron simulation for the HSCP analysis using updated simualtion. To do this, CMSSW that was not used for th main UL production needs to be used, and these directions do that, and only that.
+
+This is checked and working on the cmslpc cluster.
+
+## 2018 Custom signal MC - local
+
+First, we have to enter a container.
+
+```
+cmssw-el7 -p --bind `readlink $HOME` --bind /uscms_data/ --bind /cvmfs
 ```
 
-Run a test job:
+Next, we want to setup an environment that lets us generate samples. *This must be done within the container!* In the orignal repo, different CMSSW releases were used for different steps - this fork is no different! The setup script sourced builds the releases that are necessary to run the code. It is unclear if all of them are necessary, but baby steps! Would have to systematically check each. So, enter the directory with the setup script of the campaign we want to generate:
+
+```
+cd campaigns/RunIISummer20UL18wmLHE
+source setup_env.sh
+```
+
+This will take a few minutes. All of the releases are built in the `env` subdirectory of the campaign. Now, we do not want to just go half cocked into a generation, so let's see if we can get the canned test to work.
+
+Return to the base directory:
+
+```
+cd ../..
+```
+
+Enter the `test` directory:
+
 ```
 cd $MYOMC/test
 source runtest.sh local
