@@ -36,7 +36,7 @@ elif [ "$QUEUE" == "local" ]; then
     STARTDIR=$PWD
     mkdir testjob
     cd testjob
-    source "$STARTDIR/../campaigns/RunIISummer20UL17wmLHE/run.sh" test "$STARTDIR/fragment_zpqq.py" 3 1 1 "$STARTDIR/../campaigns/RunIISummer20UL17wmLHE/pileupinput.dat"
+    source "$STARTDIR/../campaigns/RunIISummer20UL18wmLHE/run.sh" test "$STARTDIR/fragment_zpqq.py" 3 1 1 "$STARTDIR/../campaigns/RunIISummer20UL18wmLHE/pileupinput.dat"
     # Args are: name fragment_path nevents random_seed nthreads pileup_filelist
     cd $STARTDIR
 fi
