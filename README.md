@@ -13,7 +13,7 @@ We want to use this code base to make private R-hadron simulation for the HSCP a
 
 This is checked and working on the cmslpc cluster.
 
-## 2018 Custom signal MC - local
+## 2018 Private MC - local test w
 
 First, we have to enter a container.
 
@@ -25,7 +25,7 @@ Next, we want to setup an environment that lets us generate samples. *This must 
 
 ```
 cd campaigns/RunIISummer20UL18wmLHE
-source setup_env.sh
+source setup_env.sh --> not necessary to run local tsets
 ```
 
 This will take a few minutes. All of the releases are built in the `env` subdirectory of the campaign. Now, we do not want to just go half cocked into a generation, so let's see if we can get the canned test to work.
@@ -39,13 +39,24 @@ cd ../..
 Enter the `test` directory:
 
 ```
+source env.sh
 cd $MYOMC/test
 source runtest.sh local
 # Or
 # source runtest.sh condor
 ```
 
-See the test script for the syntax. 
+See the test script for the syntax.
+
+## Running the R-hadron stuff locally
+
+```
+source env.sh
+cmssw-el7 -p --bind `readlink $HOME` --bind /uscms_data/ --bind /cvmfs
+cd test
+source runrhadtest.sh local
+```
+
 
 ## NANOGEN example
 NANOGEN ([twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/NanoGen)) is a lightweight data format containing only generator-level information. The input is a pythia fragment, e.g. one downloaded from MCM or the GEN repositories. Assuming you have a fragment named `fragment.py`, the usage is as follows:
