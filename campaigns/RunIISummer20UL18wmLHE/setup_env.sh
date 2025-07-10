@@ -54,6 +54,13 @@ eval `scram runtime -sh`
 scram b
 cd ../../
 
+scram project -n "CMSSW_10_6_47" CMSSW_10_6_47
+cd CMSSW_10_6_47/src
+eval `scram runtime -sh`
+scram b
+cd ../../
+
+echo taring environments
 tar -czf env.tar.gz ./CMSSW*
 mv env.tar.gz ..
 cd ..

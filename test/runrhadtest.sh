@@ -34,9 +34,9 @@ elif [ "$QUEUE" == "condor_eos" ]; then
         --env
 elif [ "$QUEUE" == "local" ]; then
     STARTDIR=$PWD
-    mkdir testjob
-    cd testjob
-    source "$STARTDIR/../campaigns/RunIISummer20UL18wmLHE/run.sh" test "$STARTDIR/fragment_zpqq.py" 3 1 1 "$STARTDIR/../campaigns/RunIISummer20UL18wmLHE/pileupinput.dat"
+    mkdir testrhadrun
+    cd testrhadrun
+    source "$STARTDIR/../campaigns/RunIISummer20UL18wmLHE/run_rhadron.sh" test_rhadrun "$STARTDIR/fragment_zpqq.py" 3 1 1 "$STARTDIR/../campaigns/RunIISummer20UL18wmLHE/pileupinput.dat"
     # Args are: name fragment_path nevents random_seed nthreads pileup_filelist
     cd $STARTDIR
 fi
