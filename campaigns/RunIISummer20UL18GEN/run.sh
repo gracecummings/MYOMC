@@ -109,7 +109,7 @@ cmsDriver.py Configuration/GenProduction/python/fragment.py \
 #this script you'd edit to change the generated masses
 REPORT_NAME=RunIISummer20UL18GENSIM_report_$NAME_$JOBINDEX.xml
 echo about to cmsRun for GENSIM
-#cmsRun -e -j $REPORT_NAME "RunIISummer20UL18GENSIM_${NAME}_cfg.py"
+cmsRun -e -j $REPORT_NAME "RunIISummer20UL18GENSIM_${NAME}_cfg.py"
 
 #check that the GENSIM step worked
 if [ ! -f "RunIISummer20UL18GENSIM_$NAME_$JOBINDEX.root" ]; then
@@ -164,7 +164,7 @@ cmsDriver.py  \
     
 #cmsRun to actually execute
 echo about to cmsRun for DIGIPremix    
-#cmsRun "RunIISummer20UL18DIGIPremix_${NAME}_cfg.py"
+cmsRun "RunIISummer20UL18DIGIPremix_${NAME}_cfg.py"
 if [ ! -f "RunIISummer20UL18DIGIPremix_$NAME_$JOBINDEX.root" ]; then
     echo "RunIISummer20UL18DIGIPremix_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
@@ -209,7 +209,7 @@ cmsDriver.py \
     --mc
 #cmsRun
 echo about to cmsRun for HLT
-#cmsRun "RunIISummer20UL18HLT_${NAME}_cfg.py"
+cmsRun "RunIISummer20UL18HLT_${NAME}_cfg.py"
 if [ ! -f "RunIISummer20UL18HLT_$NAME_$JOBINDEX.root" ]; then
     echo "RunIISummer20UL18HLT_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
