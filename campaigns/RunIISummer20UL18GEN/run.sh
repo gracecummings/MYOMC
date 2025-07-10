@@ -86,6 +86,7 @@ cd $TOPDIR
 
 ##GENSIM step
 echo Doing the GEN and SIM steps
+echo Added custom sim for HSCPs
 #cmsDriver cmd taken from McM and generalized
 #https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get_test/EXO-RunIISummer20UL18GENSIM-00010
 cmsDriver.py Configuration/GenProduction/python/fragment.py \
@@ -107,6 +108,7 @@ cmsDriver.py Configuration/GenProduction/python/fragment.py \
 #cmsRun command using the .py config the previous part made
 #this script you'd edit to change the generated masses
 REPORT_NAME=RunIISummer20UL18GENSIM_report_$NAME_$JOBINDEX.xml
+echo about to cmsRun for GENSIM
 #cmsRun -e -j $REPORT_NAME "RunIISummer20UL18GENSIM_${NAME}_cfg.py"
 
 #check that the GENSIM step worked
@@ -161,12 +163,73 @@ cmsDriver.py  \
     --runUnscheduled \
     
 #cmsRun to actually execute
-echo $PILEUP_FILELIST
-cmsRun "RunIISummer20UL18DIGIPremix_${NAME}_cfg.py"
+echo about to cmsRun for DIGIPremix    
+#cmsRun "RunIISummer20UL18DIGIPremix_${NAME}_cfg.py"
 if [ ! -f "RunIISummer20UL18DIGIPremix_$NAME_$JOBINDEX.root" ]; then
     echo "RunIISummer20UL18DIGIPremix_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
 fi
 
-#    --pileup_input "file:../../campaigns/RunIISummer20UL18wmLHE/pileupinput.dat" \
-#--pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX"
+##HLT Step
+export SCRAM_ARCH=slc7_amd64_gcc700
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+cd $TOPDIR
+echo Doing HLT step
+
+#build CMSSW release used in official run 2 samples
+#taken right from the test command in the McM
+#https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get_test/EXO-RunIISummer20UL18HLT-00862
+if [ -r CMSSW_10_2_16_UL/src ] ; then
+  echo release CMSSW_10_2_16_UL already exists
+else
+  scram p CMSSW CMSSW_10_2_16_UL
+fi
+cd CMSSW_10_2_16_UL/src
+eval `scram runtime -sh`
+cd $CMSSW_BASE/src
+scram b
+cd $TOPDIR
+#cmsDriver to build the .py config file
+cmsDriver.py \
+    --eventcontent RAWSIM \
+    --customise Configuration/DataProcessing/Utils.addMonitoring \
+    --datatier GEN-SIM-RAW \
+    --conditions 102X_upgrade2018_realistic_v15 \
+    --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' \
+    --step HLT:2018v32 \
+    --geometry DB:Extended \
+    --era Run2_2018 \
+    --filein "file:RunIISummer20UL18DIGIPremix_$NAME_$JOBINDEX.root" \
+    --fileout "file:RunIISummer20UL18HLT_$NAME_$JOBINDEX.root" \
+    --python_filename "RunIISummer20UL18HLT_${NAME}_cfg.py" \
+    --number 193 \
+    --number_out 193 \
+    --no_exec \
+    --mc
+#cmsRun
+echo about to cmsRun for HLT
+cmsRun "RunIISummer20UL18HLT_${NAME}_cfg.py"
+if [ ! -f "RunIISummer20UL18HLT_$NAME_$JOBINDEX.root" ]; then
+    echo "RunIISummer20UL18HLT_$NAME_$JOBINDEX.root not found. Exiting."
+    return 1
+fi
+
+##RECO step (outputs an AOD)
+echo Doing RECO step and making an AOD file
+
+#build CMSSW release used in official run 2 samples
+#taken right from the test command in the McM
+export SCRAM_ARCH=slc7_amd64_gcc700
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+if [ -r CMSSW_10_6_17_patch1/src ] ; then
+  echo release CMSSW_10_6_17_patch1 already exists
+else
+  scram p CMSSW CMSSW_10_6_17_patch1
+fi
+cd CMSSW_10_6_17_patch1/src
+eval `scram runtime -sh`
+cd $CMSSW_BASE/src
+scram b
+cd $TOPDIR
+
+#cmsDriver to build the .py config file
