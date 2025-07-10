@@ -202,13 +202,14 @@ cmsDriver.py \
     --filein "file:RunIISummer20UL18DIGIPremix_$NAME_$JOBINDEX.root" \
     --fileout "file:RunIISummer20UL18HLT_$NAME_$JOBINDEX.root" \
     --python_filename "RunIISummer20UL18HLT_${NAME}_cfg.py" \
-    --number 193 \
-    --number_out 193 \
+    --number $NEVENTS \
+    --number_out $NEVENTS \
+    --nThreads $(( $MAX_NTHREADS < 8 ? $MAX_NTHREADS : 8 )) \
     --no_exec \
     --mc
 #cmsRun
 echo about to cmsRun for HLT
-cmsRun "RunIISummer20UL18HLT_${NAME}_cfg.py"
+#cmsRun "RunIISummer20UL18HLT_${NAME}_cfg.py"
 if [ ! -f "RunIISummer20UL18HLT_$NAME_$JOBINDEX.root" ]; then
     echo "RunIISummer20UL18HLT_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
@@ -233,3 +234,27 @@ scram b
 cd $TOPDIR
 
 #cmsDriver to build the .py config file
+cmsDriver.py  \
+    --eventcontent AODSIM \
+    --customise Configuration/DataProcessing/Utils.addMonitoring \
+    --datatier AODSIM \
+    --conditions 106X_upgrade2018_realistic_v11_L1v1 \
+    --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI \
+    --geometry DB:Extended \
+    --era Run2_2018 \
+    --python_filename "RunIISummer20UL18RECO_${NAME}_cfg.py"\
+    --filein "file:RunIISummer20UL18HLT_$NAME_$JOBINDEX.root" \
+    --fileout "file:RunIISummer20UL18RECO_$NAME_$JOBINDEX.root" \
+    --number $NEVENTS \
+    --number_out $NEVENTS \
+    --runUnscheduled \
+    --no_exec \
+    --mc \
+    --nThreads $(( $MAX_NTHREADS < 8 ? $MAX_NTHREADS : 8 )) \
+#cmsRun
+echo about to do cmsRun for RECO
+cmsRun "RunIISummer20UL18RECO_${NAME}_cfg.py"
+if [ ! -f "RunIISummer20UL18RECO_$NAME_$JOBINDEX.root" ]; then
+    echo "RunIISummer20UL18RECO_$NAME_$JOBINDEX.root not found. Exiting."
+    return 1
+fi
