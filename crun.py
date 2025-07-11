@@ -42,7 +42,7 @@ known_campaigns.append("NANOGEN")
 #known_campaigns = ["RunIIFall18GS", "RunIIFall18GSBParking", "RunIISummer20UL17wmLHE", "NANOGEN"]:
 
 def make_proxy(proxy_path):
-    os.system("voms-proxy-init -voms cms -out {} -valid 72:00".format(proxy_path))
+    os.system("voms-proxy-init -voms cms -out {} -valid 192:00".format(proxy_path))
 
 def get_proxy_lifetime(proxy_path):
     import subprocess
@@ -59,6 +59,7 @@ if __name__ == "__main__":
     parser.add_argument("--env", "-e", action="store_true", help="Use pre-packaged CMSSW environments (run setup_env.sh first)")
     parser.add_argument("--pileup_file", "-p", action="store_true", help="Use premade pileup input file instead of DAS query (saves some time)")
     parser.add_argument("--nevents_job", type=int, default=100, help="Number of events per job")
+    parser.add_argument("--mass_rhad", type=int, help="Mass of R-hadron in GeV")
     parser.add_argument("--njobs", type=int, default=1, help="Number jobs")
     parser.add_argument("--keepNANOGEN", action="store_true", help="Keep NANOGEN")
     parser.add_argument("--keepNANO", action='store_true', help="Keep NanoAOD")
@@ -193,6 +194,9 @@ done
         command = f"source $_CONDOR_SCRATCH_DIR/run.sh {args.name} $_CONDOR_SCRATCH_DIR/{os.path.basename(fragment_abspath)} {args.nevents_job} $(($1+{args.seed_offset})) {args.max_nthreads} "
         if args.pileup_file:
             command += " $_CONDOR_SCRATCH_DIR/pileupinput.dat"
+        if args.mass_rhad:
+            print("Changing default r-hadron mass to {} GeV".format(args.mass_rhad))
+            command += " "+str(args.mass_rhad)
         command += " 2>&1"
         run_script.write(command + "\n")
         #run_script.write("source run_BParkingNANO.sh {} $NEVENTS ./*MiniAOD*root".format(args.bnano_cfg))
