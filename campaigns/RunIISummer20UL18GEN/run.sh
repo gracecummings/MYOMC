@@ -48,7 +48,6 @@ if [ -z "$6" ]; then
 else
     PILEUP_FILELIST="filelist:$6"
 fi
-
 echo "Fragment=$FRAGMENT"
 echo "Job name=$NAME"
 echo "NEvents=$NEVENTS"
@@ -78,6 +77,13 @@ if [ ! -f "$CMSSW_BASE/src/Configuration/GenProduction/python/fragment.py" ]; th
     echo "Fragment copy failed"
     exit 1
 fi
+
+#edit the mass generated
+if [ ! -z "$7" ]; then
+    echo "Changing generated mass point from default, using $7"
+    sed -i " s/1800/$7/" $CMSSW_BASE/src/Configuration/GenProduction/python/fragment.py
+fi
+
 cd $CMSSW_BASE/src
 scram b
 cd $TOPDIR

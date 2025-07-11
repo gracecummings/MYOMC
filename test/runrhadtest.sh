@@ -45,7 +45,7 @@ elif [ "$QUEUE" == "localrhad" ]; then
     STARTDIR=$PWD
     mkdir testrun_rhad
     cd testrun_rhad
-    source "$STARTDIR/../campaigns/RunIISummer20UL18GEN/run.sh" test_rhad "$STARTDIR/EXO-RunIISummer20UL18GENSIM-00010-fragment.py" 3 1 1 "$STARTDIR/../campaigns/RunIISummer20UL18GEN/pileupinput.dat"
-    # Args are: name fragment_path nevents random_seed nthreads pileup_filelist
+    source "$STARTDIR/../campaigns/RunIISummer20UL18GEN/run.sh" test_rhad "$STARTDIR/EXO-RunIISummer20UL18GENSIM-00010-fragment.py" 2 3 1 "$STARTDIR/../campaigns/RunIISummer20UL18GEN/pileupinput.dat" "1600"
+    # Args are: name fragment_path nevents random_seed nthreads pileup_filelist gluino_mass(optional, default will be used otherwise)
     cd $STARTDIR
 fi
