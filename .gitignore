@@ -1,0 +1,9 @@
+jobs/*
+campaigns/*/env.tar.gz
+campaigns/*/pileupinput.dat.2025*
+campaigns/*/env/*
+campaigns/*/*.sh~
+test/Configuration/*
+#*
+*~
+test/test_x509/*
