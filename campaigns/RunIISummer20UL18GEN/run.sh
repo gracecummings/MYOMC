@@ -41,13 +41,16 @@ if [ -z "$5" ]; then
 else
     MAX_NTHREADS=$5
 fi
-RSEED=$((JOBINDEX * MAX_NTHREADS * 4 + 1001)) # Space out seeds; Madgraph concurrent mode adds idx(thread) to random seed. The extra *4 is a paranoia factor.
 
 if [ -z "$6" ]; then
     PILEUP_FILELIST="dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" 
 else
     PILEUP_FILELIST="filelist:$6"
 fi
+
+RSEED=$((JOBINDEX * MAX_NTHREADS * 4 + 1001 * SEED_OFFSET)) # Space out seeds; Madgraph concurrent mode adds idx(thread) to random seed. The extra *4 is a paranoia factor.
+
+    
 echo "Fragment=$FRAGMENT"
 echo "Job name=$NAME"
 echo "NEvents=$NEVENTS"
@@ -103,7 +106,7 @@ cmsDriver.py Configuration/GenProduction/python/fragment.py \
 	     --datatier GEN-SIM \
 	     --conditions 106X_upgrade2018_realistic_v4 \
 	     --beamspot Realistic25ns13TeVEarly2018Collision \
-	     --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(100)" \
+	     --customise_commands "process.source.numberEventsInLuminosityBlock=cms.untracked.uint32(100)\\nprocess.RandomNumberGeneratorService.generator.initialSeed=$RSEED" \
 	     --step GEN,SIM \
 	     --geometry DB:Extended \
 	     --era Run2_2018 \
